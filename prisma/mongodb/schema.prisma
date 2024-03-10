@@ -1,0 +1,30 @@
+datasource db {
+    provider = "mongodb"
+    url      = env("MONGODB_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+    output   = "../../dist/@prisma/client/mongodb"
+}
+
+model Reply {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    text      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    Comment   Comment? @relation(fields: [commentId], references: [id])
+    commentId String?  @map("comment_id") @db.ObjectId
+
+    @@map("replies")
+}
+
+model Comment {
+    id        String   @id @default(auto()) @map("_id") @db.ObjectId
+    text      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    replies   Reply[]
+
+    @@map("comments")
+}
